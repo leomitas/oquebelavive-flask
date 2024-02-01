@@ -5,7 +5,6 @@ import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://leomitas:123456@localhost/oquebelavive'
 db = SQLAlchemy(app)
 CORS(app)
 
