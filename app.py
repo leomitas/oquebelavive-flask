@@ -4,6 +4,11 @@ from flask_cors import CORS
 import os
 
 app = Flask(__name__)
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 db = SQLAlchemy(app)
 CORS(app)
