@@ -22,6 +22,10 @@ class Product(db.Model):
     sold = db.Column(db.Float, nullable=False)
     linkForSale = db.Column(db.String(200), nullable=True)
 
+@app.route('/', methods=['GET'])
+def home():
+    return "Hello, World!"
+
 @app.route('/product', methods=['POST'])
 def create_product():
     data = request.get_json()
