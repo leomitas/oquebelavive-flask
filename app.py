@@ -7,7 +7,7 @@ from urllib.parse import urlparse, uses_netloc
 
 app = Flask(__name__)
 uses_netloc.append("postgres")
-url = urlparse(os.getenv('DATABASE_URL'))
+url = urlparse(os.getenv('EXTERNAL_DATABASE_URL'))
 
 conn = psycopg2.connect(
     database=url.path[1:],
@@ -17,7 +17,7 @@ conn = psycopg2.connect(
     port=url.port
 )
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('EXTERNAL_DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
