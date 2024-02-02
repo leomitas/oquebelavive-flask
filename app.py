@@ -88,6 +88,6 @@ def update_product(id):
     return jsonify({'message': 'Produto atualizado com sucesso!'})
 
 
-if __name__ == '__main__':
+if __name__ == '__app__':
     with app.app_context():
         db.create_all()
