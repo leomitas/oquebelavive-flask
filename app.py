@@ -2,12 +2,23 @@ from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
+import psycopg2
+from urllib.parse import urlparse, uses_netloc
 
 app = Flask(__name__)
-DATABASE_URL = os.getenv('DATABASE_URL')
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+uses_netloc.append("postgres")
+url = urlparse(os.getenv('DATABASE_URL'))
+
+conn = psycopg2.connect(
+    database=url.path[1:],
+    user=url.username,
+    password=url.password,
+    host=url.hostname,
+    port=url.port
+)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
