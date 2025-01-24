@@ -2,18 +2,16 @@ from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flasgger import Swagger, LazyString, LazyJSONEncoder
+from flasgger import Swagger
 import os
 
 app = Flask(__name__)
 
-app.json_encoder = LazyJSONEncoder
-
 app.config['SWAGGER'] = {
-    'title': LazyString(lambda: 'API de Produtos'),
+    'title': 'API de Produtos',
     'uiversion': 3,
-    'version': LazyString(lambda: '1.0'),
-    'description': LazyString(lambda: 'Uma API para gerenciar produtos')
+    'version': '1.0',
+    'description': 'Uma API para gerenciar produtos'
 }
 swagger = Swagger(app)
 
