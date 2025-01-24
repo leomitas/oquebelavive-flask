@@ -11,7 +11,7 @@ from flask_migrate import Migrate
 
 migrate = Migrate(app, db)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql-rectangular-93507'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://u3afl46d1u0mld:p4c48e12931e7c75c92a3d051622774ac7890091ea4cdd175a47682b788f6c167@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d6gq13gvfmgbli'
 if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
     app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
 
