@@ -6,18 +6,11 @@ import psycopg2
 from urllib.parse import urlparse, uses_netloc
 
 app = Flask(__name__)
-uses_netloc.append("postgres")
-url = urlparse(os.getenv('DATABASE_URL'))
-
-conn = psycopg2.connect(
-    database=url.path[1:],
-    user=url.username,
-    password=url.password,
-    host=url.hostname,
-    port=url.port
-)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
@@ -100,7 +93,7 @@ def update_product(id):
     db.session.commit()
     return jsonify({'message': 'Produto atualizado com sucesso!'})
 
-
-if __name__ == '__app__':
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+    app.run()
