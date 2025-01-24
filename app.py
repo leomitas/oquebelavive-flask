@@ -7,11 +7,13 @@ import os
 
 app = Flask(__name__)
 
+app.json_encoder = LazyJSONEncoder
+
 app.config['SWAGGER'] = {
-    'title': 'API de Produtos',
+    'title': LazyString(lambda: 'API de Produtos'),
     'uiversion': 3,
-    'version': '1.0',
-    'description': 'Uma API para gerenciar produtos'
+    'version': LazyString(lambda: '1.0'),
+    'description': LazyString(lambda: 'Uma API para gerenciar produtos')
 }
 swagger = Swagger(app)
 
