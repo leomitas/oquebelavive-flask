@@ -2,9 +2,18 @@ from flask import Flask, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flasgger import Swagger
 import os
 
 app = Flask(__name__)
+
+app.config['SWAGGER'] = {
+    'title': 'API de Produtos',
+    'uiversion': 3,
+    'version': '1.0',
+    'description': 'Uma API para gerenciar produtos'
+}
+swagger = Swagger(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://u3afl46d1u0mld:p4c48e12931e7c75c92a3d051622774ac7890091ea4cdd175a47682b788f6c167@ceqbglof0h8enj.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d6gq13gvfmgbli'
 if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
@@ -26,10 +35,49 @@ class Product(db.Model):
 
 @app.route('/', methods=['GET'])
 def home():
+    """
+    Página inicial
+    ---
+    responses:
+      200:
+        description: Mensagem de boas-vindas
+    """
     return "Hello, World!"
 
 @app.route('/product', methods=['POST'])
 def create_product():
+    """
+    Cria um novo produto
+    ---
+    parameters:
+      - in: body
+        name: body
+        schema:
+          id: Product
+          required:
+            - name
+            - image
+            - price
+            - sold
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            image:
+              type: string
+            price:
+              type: number
+            sold:
+              type: number
+            linkForSale:
+              type: string
+    responses:
+      200:
+        description: Produto criado com sucesso
+      400:
+        description: Campos necessários faltando
+    """
     data = request.get_json()
     if 'name' not in data or 'image' not in data or 'price' not in data or 'sold' not in data:
         abort(400, description='Faltando campos necessários')
@@ -46,6 +94,19 @@ def create_product():
 
 @app.route('/product', methods=['GET'])
 def get_products():
+    """
+    Retorna todos os produtos
+    ---
+    responses:
+      200:
+        description: Lista de produtos
+        schema:
+          properties:
+            products:
+              type: array
+              items:
+                $ref: '#/definitions/Product'
+    """
     products = Product.query.all()
     output = []
 
@@ -65,6 +126,22 @@ def get_products():
 
 @app.route('/product/<int:id>', methods=['GET'])
 def get_product(id):
+    """
+    Retorna um produto específico
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+    responses:
+      200:
+        description: Detalhes do produto
+        schema:
+          $ref: '#/definitions/Product'
+      404:
+        description: Produto não encontrado
+    """
     product = Product.query.get(id)
     if product is None:
         return jsonify({'message': 'Produto não encontrado!'}), 404
@@ -72,6 +149,37 @@ def get_product(id):
 
 @app.route('/product/<int:id>', methods=['PATCH'])
 def update_product(id):
+    """
+    Atualiza um produto existente
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: true
+      - in: body
+        name: body
+        schema:
+          id: ProductUpdate
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            image:
+              type: string
+            price:
+              type: number
+            sold:
+              type: number
+            linkForSale:
+              type: string
+    responses:
+      200:
+        description: Produto atualizado com sucesso
+      404:
+        description: Produto não encontrado
+    """
     data = request.get_json()
     product = Product.query.get(id)
     if product is None:
